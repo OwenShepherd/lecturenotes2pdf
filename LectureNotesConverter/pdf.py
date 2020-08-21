@@ -11,10 +11,6 @@ from __future__ import print_function, absolute_import
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import inch
 
-from .notebook import TextingMachine
-
-_log = logging.getLogger(__name__)
-
 class PDFGenerator(object):
     def __init__(self, notebook, pdf_filename):
         self.notebook = notebook
@@ -31,7 +27,6 @@ class PDFGenerator(object):
         canvas.setTitle(self.notebook.name)
 
         for page in self.notebook.pages:
-            _log.info('{}: drawing page {}'.format(self.notebook.name, page.number))
             self.draw_page(canvas, page)
             canvas.showPage()
 
@@ -46,18 +41,13 @@ class PDFGenerator(object):
         layer = 1
         img_layer = 1
         while layer <= self.notebook.displayed_layers:
-            if self.notebook.have_text_layer and self.notebook.text_layer == layer:
-                self.draw_text_layer(canvas, page)
-            else:
-                self.draw_image_layer(canvas, page, img_layer)
-                # note the image layer counter does not increment when
-                # we draw a text layer
-                img_layer += 1
+            self.draw_image_layer(canvas, page, img_layer)
+            # note the image layer counter does not increment when
+            # we draw a text layer
+            img_layer += 1
             layer += 1
 
     def draw_image_layer(self, canvas, page, layer):
-        _log.debug('{}: page {}: drawing image layer {}'.format(
-            self.notebook.name, page.number, layer))
         # Note the layers are 1-indexed
         canvas.drawImage(page.image_layers[layer-1],
                          0, 0, self.width, self.height,
