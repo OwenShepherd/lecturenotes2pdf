@@ -2,8 +2,6 @@
 lecturenotes2pdf.pdf
 
 PDF generation
-
-Appears to mostly handle creating the pdf.
 """
 
 from __future__ import print_function, absolute_import

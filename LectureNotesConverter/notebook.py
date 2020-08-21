@@ -2,8 +2,6 @@
 lecturenotes2pdf.notebook
 
 Interface to LectureNotes notebooks
-
-Appears to mostly handle parsing of documents.
 """
 
 from collections import namedtuple
@@ -14,7 +12,6 @@ import xml.etree.ElementTree as ET
 
 _log = logging.getLogger(__name__)
 
-# File splits notebook types into NotebooksBoard, Folder, and Notebook
 class NotebooksBoard(object):
     def __init__(self, path):
         if path.endswith('settings.xml') and os.path.exists(path):
@@ -62,23 +59,17 @@ class Folder(object):
                 elif 'folder.xml' in grandchildren:
                     yield Folder(child_path)
 
-# Focus on a specific notebook xml file
+
 class Notebook(object):
     def __init__(self, path):
-        ### Simply checks the existence of the notebook.xml ###
         if path.endswith('notebook.xml') and os.path.exists(path):
             path = os.path.dirname(path)
         elif not (os.path.isdir(path) and 'notebook.xml' in os.listdir(path)):
             raise ValueError('{} is not the the location of a notebook')
-        ### ###
-
 
         self.root = path
-
-        # Collects the notebook name
         self.name = os.path.basename(path)
 
-        ### Collects the pages of the notebook.  Page class definition within file. Breaks with no pages left. ###
         i = 1
         self.pages = []
         while True:
@@ -87,9 +78,7 @@ class Notebook(object):
                 i += 1
             except ValueError:
                 break
-        ### ###
 
-        ### This section essentially appears to collect the notebook settings. ###
         self._notebook_xml = ET.parse(os.path.join(self.root, 'notebook.xml'))
         root = self._notebook_xml.getroot()
 
@@ -118,25 +107,20 @@ class Notebook(object):
         # Check if there is a text layer!
         self.have_text_layer = any(p.text is not None or p.text_boxes
                                    for p in self.pages)
-        ### ###
 
 
 class Page(object):
     def __init__(self, notebook, number):
-        # Notebook that it's apart of
         self.notebook = notebook
         self.root = notebook.root
         self.number = number
 
-        ### Collecting image layers (includes stylus writing) ###
         # Collect image layers
         bg_1 = os.path.join(self.root, 'page{}.png'.format(number))
         if not os.path.exists(bg_1):
             raise ValueError("No such page: {}".format(number))
 
         self.image_layers = [bg_1]
-        
-        ### Collecting sub-pages of each page ### 
         i = 2
         while True:
             path = os.path.join(self.root, 'page{}_{}.png'.format(number, i))
@@ -145,9 +129,7 @@ class Page(object):
                 i += 1
             else:
                 break
-        ### ###
 
-        
         # Collect text layer and boxes
         textpath_base = os.path.join(self.root, 'text{}'.format(self.number))
         if os.path.exists(textpath_base + '.txt'):
