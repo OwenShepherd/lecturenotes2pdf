@@ -39,6 +39,7 @@ def convert_board(board, verbosity):
 
 
 def main():
+    # Arg Parser handling
     arg_parser = argparse.ArgumentParser('lecturenotes2pdf')
     arg_parser.add_argument('location', help='location of LectureNotes data')
     arg_parser.add_argument('-l', '--list', action='store_true',
@@ -48,6 +49,7 @@ def main():
 
     args = arg_parser.parse_args()
 
+    # Logger
     logger = logging.getLogger('lecturenotes2pdf')
     # create console handler and set level to debug
     ch = logging.StreamHandler()
