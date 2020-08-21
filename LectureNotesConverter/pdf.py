@@ -3,11 +3,6 @@ lecturenotes2pdf.pdf
 
 PDF generation
 """
-
-from __future__ import print_function, absolute_import
-
-# import logging
-
 from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.units import inch
 
@@ -39,12 +34,8 @@ class PDFGenerator(object):
 
         # Draw the layers
         layer = 1
-        img_layer = 1
         while layer <= self.notebook.displayed_layers:
-            self.draw_image_layer(canvas, page, img_layer)
-            # note the image layer counter does not increment when
-            # we draw a text layer
-            img_layer += 1
+            self.draw_image_layer(canvas, page, layer)
             layer += 1
 
     def draw_image_layer(self, canvas, page, layer):
