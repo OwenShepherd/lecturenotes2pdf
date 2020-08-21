@@ -10,6 +10,18 @@ import os
 import os.path
 import xml.etree.ElementTree as ET
 
+# Notebooks must point to an xml
+class Notebook(object):
+    def __init__(self, path_to_xml):
+        if os.path.exists(path) and path.endswith('notebook.xml'):
+            self.root_dir = os.path.dirname(path)
+            self.name = os.path.basename(self.root_dir)
+        else:
+            raise ValueError("Invalid notebook location used.")
+
+        # Create Page objects next
+        pass
+
 # _log = logging.getLogger(__name__)
 
 # class NotebooksBoard(object):
